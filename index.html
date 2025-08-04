@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouNeedThisTool Dashboard</title>
+
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body class="dark">
+
+  <script>
+    // Proteção simples por senha
+    const senha = prompt("Digite a senha para acessar o painel:");
+    if (senha !== "corinthians2012") {
+      document.body.innerHTML = "⛔ Acesso negado.";
+      throw new Error("Senha incorreta");
+    }
+  </script>
+
+  <h1>YouNeedThisTool Performance Dashboard</h1>
+
+  <div class="filter-bar">
+    <label for="platformFilter">Filter by Platform:</label>
+    <select id="platformFilter">
+      <option value="all">All</option>
+    </select>
+
+    <label for="dateFilter">Filter by Date:</label>
+    <select id="dateFilter">
+      <option value="all">All</option>
+      <option value="today">Today</option>
+      <option value="yesterday">Yesterday</option>
+      <option value="last7">Last 7 Days</option>
+      <option value="last15">Last 15 Days</option>
+      <option value="last30">Last 30 Days</option>
+      <option value="thisMonth">This Month</option>
+      <option value="lastMonth">Last Month</option>
+    </select>
+  </div>
+
+  <section class="summary" aria-label="Summary statistics">
+    <div class="card">
+      <h3>Total Clicks</h3>
+      <p id="totalClicks">0</p>
+    </div>
+    <div class="card">
+      <h3>Total Orders</h3>
+      <p id="totalOrders">0</p>
+    </div>
+    <div class="card">
+      <h3>Total Commissions</h3>
+      <p id="totalCommissions">$0.00</p>
+    </div>
+  </section>
+
+  <div class="chart-container">
+    <h2>Clicks by Platform</h2>
+    <canvas id="chartPlatform"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>Clicks by CTA</h2>
+    <canvas id="chartCTA"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>Daily Click Trend</h2>
+    <canvas id="chartEvolucao"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>Daily Orders Trend</h2>
+    <canvas id="chartOrdersEvolucao"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>Conversion by Platform</h2>
+    <canvas id="chartConversion"></canvas>
+  </div>
+
+  <div class="table-container">
+    <h2>Top 5 Products by Orders</h2>
+    <table>
+      <thead><tr><th>Product</th><th>Orders</th></tr></thead>
+      <tbody id="topProducts"></tbody>
+    </table>
+  </div>
+
+  <div class="table-container">
+    <h2>Products with No Clicks or Orders</h2>
+    <table>
+      <thead><tr><th>Product</th></tr></thead>
+      <tbody id="zeroProducts"></tbody>
+    </table>
+  </div>
+
+  <div class="export">
+    <button id="exportPdf">🖨️ Export as PDF</button>
+  </div>
+
+  <script type="module" src="js/dashboard.js"></script>
+
+  <script>
+    document.getElementById("exportPdf").addEventListener("click", () => {
+      const original = document.body;
+      const clone = original.cloneNode(true);
+      clone.querySelectorAll("script, .export").forEach(el => el.remove());
+      clone.classList.add("dark");
+
+      const wrapper = document.createElement("div");
+      wrapper.style.width = "1000px";
+      wrapper.style.padding = "2rem";
+      wrapper.style.backgroundColor = "#0a0a0a";
+      wrapper.style.color = "#33ff99";
+      wrapper.classList.add("dark");
+      wrapper.appendChild(clone);
+
+      html2pdf().from(wrapper).set({
+        margin: 0,
+        filename: 'YouNeedThisTool-Dashboard.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#0a0a0a" },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      }).save();
+    });
+  </script>
+
+</body>
+</html>
