@@ -1,15 +1,25 @@
-// chart-firebase.js - cria gráficos com dados vindos do Firebase (cliques)
-
 import { groupBy } from './utils.js';
 
-export function renderClicksByPlatformChart(ctx, clicks) {
-  // Agrupa por plataforma (ex: referrer ou device)
-  const grouped = groupBy(clicks, 'platform' /* ou 'referrer' se tiver */);
+let chartClicksByPlatform = null;
+let chartDailyClickTrend = null;
 
+export function renderClicksByPlatformChart(ctx, clicks) {
+  if (!clicks || clicks.length === 0) {
+    // Opcional: limpar canvas ou mostrar mensagem
+    if(chartClicksByPlatform) {
+      chartClicksByPlatform.destroy();
+      chartClicksByPlatform = null;
+    }
+    return;
+  }
+
+  const grouped = groupBy(clicks, 'platform');
   const labels = Object.keys(grouped);
   const data = labels.map(k => grouped[k].length);
 
-  new Chart(ctx, {
+  if(chartClicksByPlatform) chartClicksByPlatform.destroy();
+
+  chartClicksByPlatform = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
@@ -20,24 +30,41 @@ export function renderClicksByPlatformChart(ctx, clicks) {
       }]
     },
     options: {
-      scales: { y: { beginAtZero: true } }
+      responsive: true,
+      scales: { y: { beginAtZero: true } },
+      plugins: {
+        legend: { display: true },
+        tooltip: { mode: 'index', intersect: false },
+      }
     }
   });
 }
 
 export function renderDailyClickTrendChart(ctx, clicks) {
-  // Agrupa cliques por dia
+  if (!clicks || clicks.length === 0) {
+    if(chartDailyClickTrend) {
+      chartDailyClickTrend.destroy();
+      chartDailyClickTrend = null;
+    }
+    return;
+  }
+
   const clicksByDay = {};
 
   clicks.forEach(c => {
-    const day = new Date(c.timestamp).toISOString().slice(0, 10);
+    if (!c.timestamp) return;
+    const date = new Date(c.timestamp);
+    if (isNaN(date)) return;
+    const day = date.toISOString().slice(0, 10);
     clicksByDay[day] = (clicksByDay[day] || 0) + 1;
   });
 
   const labels = Object.keys(clicksByDay).sort();
   const data = labels.map(d => clicksByDay[d]);
 
-  new Chart(ctx, {
+  if(chartDailyClickTrend) chartDailyClickTrend.destroy();
+
+  chartDailyClickTrend = new Chart(ctx, {
     type: 'line',
     data: {
       labels,
@@ -50,7 +77,12 @@ export function renderDailyClickTrendChart(ctx, clicks) {
       }]
     },
     options: {
-      scales: { y: { beginAtZero: true } }
+      responsive: true,
+      scales: { y: { beginAtZero: true } },
+      plugins: {
+        legend: { display: true },
+        tooltip: { mode: 'index', intersect: false },
+      }
     }
   });
 }

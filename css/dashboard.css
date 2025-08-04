@@ -45,6 +45,7 @@
   --radius-md: 0.5rem;
 }
 
+/* Base styles */
 body {
   font-family: var(--font-primary);
   background-color: var(--color-bg-light);
@@ -53,6 +54,8 @@ body {
   padding: 2rem;
   line-height: 1.6;
   transition: background-color 0.3s, color 0.3s;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body.dark {
@@ -80,12 +83,17 @@ h2 {
 .filter-bar {
   text-align: center;
   margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .filter-bar label {
-  margin: 0 0.5rem;
   font-weight: 600;
   color: var(--color-text-light);
+  align-self: center;
+  white-space: nowrap;
 }
 
 body.dark .filter-bar label {
@@ -93,15 +101,16 @@ body.dark .filter-bar label {
 }
 
 .filter-bar select {
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
-  margin: 0 0.5rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-light);
-  transition: border-color 0.3s, box-shadow 0.3s;
   background-color: white;
   color: black;
   box-shadow: 0 0 8px #00ff66aa;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  min-width: 150px;
 }
 
 body.dark .filter-bar select {
@@ -131,6 +140,7 @@ body.dark .filter-bar select {
   transition: transform 0.2s ease, background-color 0.3s, box-shadow 0.3s;
   cursor: default;
   border: 1px solid transparent;
+  user-select: none;
 }
 
 .card:hover {
@@ -187,6 +197,7 @@ body.dark .card p {
   margin-left: auto;
   margin-right: auto;
   transition: background-color 0.3s, box-shadow 0.3s;
+  overflow: hidden;
 }
 
 body.dark .chart-container {
@@ -198,6 +209,7 @@ canvas {
   width: 100% !important;
   max-height: 400px !important;
   image-rendering: auto; /* suaviza nitidez do gráfico */
+  display: block;
 }
 
 /* Tables */
@@ -212,6 +224,7 @@ canvas {
   margin-left: auto;
   margin-right: auto;
   transition: background-color 0.3s, box-shadow 0.3s;
+  -webkit-overflow-scrolling: touch;
 }
 
 body.dark .table-container {
@@ -226,19 +239,23 @@ table {
   font-size: 0.95rem;
   min-width: 600px;
   color: var(--color-text-light);
+  word-break: break-word;
 }
 
 body.dark table {
   color: var(--color-text-dark);
 }
 
-th, td {
+th,
+td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--color-border-light);
   transition: border-color 0.3s;
+  vertical-align: middle;
 }
 
-body.dark th, body.dark td {
+body.dark th,
+body.dark td {
   border-color: var(--color-border-dark);
 }
 
@@ -247,6 +264,10 @@ th {
   font-weight: 600;
   color: var(--color-text-light);
   text-shadow: 0 0 6px rgba(0, 255, 102, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  user-select: none;
 }
 
 body.dark th {
@@ -263,6 +284,19 @@ body.dark td {
   color: var(--color-text-dark);
 }
 
+/* Hover rows */
+tbody tr:hover {
+  background-color: var(--color-accent-light);
+  color: #000;
+  cursor: default;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark tbody tr:hover {
+  background-color: var(--color-accent-dark);
+  color: #0a0a0a;
+}
+
 /* Export Button */
 .export {
   text-align: center;
@@ -270,87 +304,116 @@ body.dark td {
 }
 
 .export button {
-  background-color: #00ff66;
-  color: #000; /* Texto escuro para fundo neon */
+  background-color: var(--color-button-light);
+  color: #000; /* texto escuro para fundo neon */
   padding: 0.75rem 1.75rem;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 700;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
-  box-shadow: 0 0 10px #00ff66;
+  box-shadow: var(--shadow-light);
   transition: all 0.2s ease;
+  user-select: none;
 }
 
 body.dark .export button {
-  background-color: #00ff66;
-  color: #0a0a0a; /* Preto suave para contraste */
-  box-shadow: 0 0 15px #00ff66cc;
+  background-color: var(--color-button-dark);
+  color: var(--color-bg-dark);
+  box-shadow: var(--shadow-dark);
 }
 
 .export button:hover {
-  background-color: #33ff99;
+  background-color: var(--color-button-hover-light);
   transform: scale(1.03);
-  box-shadow: 0 0 25px #33ff99;
+  box-shadow: 0 0 25px var(--color-button-hover-light);
 }
 
 body.dark .export button:hover {
-  background-color: #33ff99;
-  box-shadow: 0 0 25px #33ff99;
+  background-color: var(--color-button-hover-dark);
+  box-shadow: 0 0 25px var(--color-button-hover-dark);
 }
 
 /* Responsive */
+/* Desktop to smaller tablets */
 @media (max-width: 1024px) {
   .summary {
     gap: 1.5rem;
   }
+
   .card {
     flex: 1 1 45%;
   }
+
   canvas {
     max-height: 350px !important;
   }
 }
 
+/* Tablets and large mobiles */
 @media (max-width: 768px) {
   h1 {
     font-size: 2rem;
   }
+
   .summary {
     flex-direction: column;
     align-items: center;
   }
+
   .card {
     width: 100%;
     max-width: none;
   }
+
   canvas {
     max-height: 300px !important;
   }
+
   table {
     font-size: 0.85rem;
   }
+
+  .filter-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-bar select {
+    min-width: 100%;
+    max-width: 320px;
+  }
 }
 
+/* Small mobiles */
 @media (max-width: 480px) {
   body {
     padding: 1rem;
   }
+
   .card {
     padding: 1.5rem;
   }
+
   .chart-container,
   .table-container {
     padding: 1.5rem;
   }
+
   .export button {
     width: 100%;
   }
+
+  .filter-bar label {
+    white-space: normal;
+  }
 }
+
+/* Print Styles */
 @media print {
   body {
-    background: #0a0a0a !important;
-    color: #33ff99 !important;
+    background: var(--color-bg-dark) !important;
+    color: var(--color-text-dark) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -359,8 +422,8 @@ body.dark .export button:hover {
   .table-container,
   .summary,
   .card {
-    background: #0a1f14 !important;
-    color: #33ff99 !important;
+    background: var(--color-surface-dark) !important;
+    color: var(--color-text-dark) !important;
     box-shadow: none !important;
     page-break-inside: avoid;
   }
@@ -370,4 +433,100 @@ body.dark .export button:hover {
   }
 }
 
+/* Cross Analysis Table Specific Styles */
+.cross-analysis-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  min-width: 600px;
+  color: var(--color-text-light);
+  user-select: none;
+}
 
+body.dark .cross-analysis-table {
+  color: var(--color-text-dark);
+}
+
+.cross-analysis-table th,
+.cross-analysis-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border-light);
+  transition: border-color 0.3s;
+  text-align: left;
+  vertical-align: middle;
+}
+
+body.dark .cross-analysis-table th,
+body.dark .cross-analysis-table td {
+  border-color: var(--color-border-dark);
+}
+
+.cross-analysis-table th {
+  background-color: var(--color-surface-alt-light);
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-shadow: 0 0 6px var(--color-accent-light);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  user-select: none;
+}
+
+body.dark .cross-analysis-table th {
+  background-color: var(--color-surface-alt-dark);
+  color: var(--color-text-dark);
+  text-shadow: 0 0 8px var(--color-accent-dark);
+}
+
+.cross-analysis-table td {
+  color: var(--color-text-light);
+}
+
+body.dark .cross-analysis-table td {
+  color: var(--color-text-dark);
+}
+
+.cross-analysis-table tbody tr:hover {
+  background-color: var(--color-accent-light);
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark .cross-analysis-table tbody tr:hover {
+  background-color: var(--color-accent-dark);
+  color: #0a0a0a;
+}
+
+/* Scroll container for cross analysis table for mobile */
+#crossAnalysisSection {
+  overflow-x: auto;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  background: var(--color-surface-light);
+  padding: 1rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-light);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+body.dark #crossAnalysisSection {
+  background: var(--color-surface-dark);
+  box-shadow: var(--shadow-dark);
+}
+
+/* Responsividade específica */
+@media (max-width: 768px) {
+  .cross-analysis-table {
+    font-size: 0.85rem;
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .cross-analysis-table {
+    font-size: 0.8rem;
+    min-width: 100%;
+  }
+}
